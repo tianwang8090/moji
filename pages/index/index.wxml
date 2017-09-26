@@ -1,13 +1,36 @@
 <!--index.wxml-->
 <view class="container">
-  <view class="userinfo">
-    <button wx:if="{{!hasUserInfo && canIUse}}" open-type="getUserInfo" bindgetuserinfo="getUserInfo"> 获取头像昵称 </button>
-    <block wx:else>
-      <image bindtap="bindViewTap" class="userinfo-avatar" src="{{userInfo.avatarUrl}}" background-size="cover"></image>
-      <text class="userinfo-nickname">{{userInfo.nickName}}</text>
-    </block>
+  <view class='btn-group'>
+    <view class='btn {{crt_view === "latest" ? "active" : ""}}' data-name="latest" bind:tap="tabTaphandle">Latest</view>
+    <view class='btn {{crt_view === "oldest" ? "active" : ""}}' data-name="oldest" bind:tap="tabTaphandle">Oldest</view>
+    <view class='btn {{crt_view === "popular" ? "active" : ""}}' data-name="popular" bind:tap="tabTaphandle">Popular</view>
   </view>
-  <view class="usermotto">
-    <text class="user-motto">{{motto}}</text>
+
+
+
+  <view class='img-wrapper'>
+
+    <scroll-view class='img-scroll' scroll-y bindscrolltolower="nextPage" enable-back-to-top lower-threshold="{{100}}">
+
+      <block wx:if="{{crt_view === 'latest'}}">
+        <view class='img-box' wx:for="{{latestImg.list}}" wx:key="{{item.id}}">
+          <image src='{{item.url}}' mode='widthFix' lazy-load></image>
+        </view>
+      </block>
+      <block wx:elif="{{crt_view === 'oldest'}}">
+        <view class='img-box' wx:for="{{oldestImg.list}}" wx:key="{{item.id}}">
+          <image src='{{item.url}}' mode='widthFix' lazy-load></image>
+        </view>
+      </block>
+      <block wx:elif="{{crt_view === 'popular'}}">
+        <view class='img-box' wx:for="{{popularImg.list}}" wx:key="{{item.id}}">
+          <image src='{{item.url}}' mode='widthFix' lazy-load></image>
+        </view>
+      </block>
+
+    </scroll-view>
+
+
   </view>
+
 </view>

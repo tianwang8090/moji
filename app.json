@@ -1,12 +1,13 @@
 {
   "pages":[
-    "pages/index/index",
-    "pages/logs/logs"
+    "pages/index/index"
   ],
   "window":{
     "backgroundTextStyle":"light",
+    "backgroundColor": "#333",
     "navigationBarBackgroundColor": "#fff",
-    "navigationBarTitleText": "WeChat",
-    "navigationBarTextStyle":"black"
+    "navigationBarTitleText": "MOJI",
+    "navigationBarTextStyle":"black",
+    "enablePullDownRefresh": false
   }
 }

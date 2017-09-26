@@ -4,51 +4,77 @@ const app = getApp()
 
 Page({
   data: {
-    motto: 'Hello World',
-    userInfo: {},
-    hasUserInfo: false,
-    canIUse: wx.canIUse('button.open-type.getUserInfo')
-  },
-  //事件处理函数
-  bindViewTap: function() {
-    wx.navigateTo({
-      url: '../logs/logs'
-    })
-  },
-  onLoad: function () {
-    if (app.globalData.userInfo) {
-      this.setData({
-        userInfo: app.globalData.userInfo,
-        hasUserInfo: true
-      })
-    } else if (this.data.canIUse){
-      // 由于 getUserInfo 是网络请求，可能会在 Page.onLoad 之后才返回
-      // 所以此处加入 callback 以防止这种情况
-      app.userInfoReadyCallback = res => {
-        this.setData({
-          userInfo: res.userInfo,
-          hasUserInfo: true
-        })
-      }
-    } else {
-      // 在没有 open-type=getUserInfo 版本的兼容处理
-      wx.getUserInfo({
-        success: res => {
-          app.globalData.userInfo = res.userInfo
-          this.setData({
-            userInfo: res.userInfo,
-            hasUserInfo: true
-          })
-        }
-      })
+    crt_view: "latest",
+    latestImg: {
+      list: [],
+      page: 1
+    },
+    oldestImg: {
+      list: [],
+      page: 1,
+    },
+    popularImg: {
+      list: [],
+      page: 1
     }
   },
-  getUserInfo: function(e) {
+  onLoad: function () {
+    this.getImageList();
+  },
+  getUserInfo: function (e) {
     console.log(e)
     app.globalData.userInfo = e.detail.userInfo
     this.setData({
       userInfo: e.detail.userInfo,
       hasUserInfo: true
+    })
+  },
+  onShareAppMessage() { },
+  onPullDownRefresh() {
+
+  },
+  tabTaphandle(e) {
+    let dataset = e.currentTarget.dataset;
+    if (dataset.name === this.data.crt_view) return;
+    this.setData({
+      crt_view: dataset.name
+    });
+    if (this.data[this.data.crt_view + 'Img'].list.length) return;
+    this.getImageList();
+  },
+  nextPage(e) {
+    this.getImageList();
+  },
+  getImageList() {
+    wx.showLoading({
+      title: 'MOJING...',
+      mask: true
+    })
+    wx.request({
+      url: "https://api.unsplash.com/photos",
+      data: {
+        page: this.data[this.data.crt_view + 'Img'].page,
+        per_page: 10,
+        order_by: this.data.crt_view
+      },
+      header: {
+        Authorization: 'Client-ID ' + app.globalData.client_id
+      },
+      success: data => {
+        if (!data.data.errors) {
+          this.data[this.data.crt_view + 'Img'].page++;
+          data.data.forEach((e, i) => {
+            this.data[this.data.crt_view + 'Img'].list.push({
+              id: e.id,
+              url: e.urls.regular
+            });
+          });
+          this.setData(this.data);
+        }
+      },
+      complete() {
+        wx.hideLoading();
+      }
     })
   }
 })
