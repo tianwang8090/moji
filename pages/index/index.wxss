@@ -26,7 +26,7 @@
 
 .btn-group .btn.active {
   color: #d2281d;
-  border-bottom: 6rpx solid #d2281d; 
+  border-bottom: 6rpx solid #d2281d;
 }
 
 .img-wrapper {
@@ -36,6 +36,11 @@
   bottom: 0;
   left: 0;
   right: 0;
+  background-color: #fff;
+}
+
+.img-wrapper.active {
+  z-index: 9;
 }
 
 .img-wrapper .img-scroll {

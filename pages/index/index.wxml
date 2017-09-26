@@ -6,31 +6,26 @@
     <view class='btn {{crt_view === "popular" ? "active" : ""}}' data-name="popular" bind:tap="tabTaphandle">Popular</view>
   </view>
 
-
-
-  <view class='img-wrapper'>
-
+  <view class='img-wrapper {{crt_view === "latest" ? "active" : ""}}'>
     <scroll-view class='img-scroll' scroll-y bindscrolltolower="nextPage" enable-back-to-top lower-threshold="{{100}}">
-
-      <block wx:if="{{crt_view === 'latest'}}">
-        <view class='img-box' wx:for="{{latestImg.list}}" wx:key="{{item.id}}">
-          <image src='{{item.url}}' mode='widthFix' lazy-load></image>
-        </view>
-      </block>
-      <block wx:elif="{{crt_view === 'oldest'}}">
-        <view class='img-box' wx:for="{{oldestImg.list}}" wx:key="{{item.id}}">
-          <image src='{{item.url}}' mode='widthFix' lazy-load></image>
-        </view>
-      </block>
-      <block wx:elif="{{crt_view === 'popular'}}">
-        <view class='img-box' wx:for="{{popularImg.list}}" wx:key="{{item.id}}">
-          <image src='{{item.url}}' mode='widthFix' lazy-load></image>
-        </view>
-      </block>
-
+      <view class='img-box' wx:for="{{latestImg.list}}" wx:key="{{item.id}}">
+        <image src='{{item.url}}' data-url="{{item.url}}" data-downurl="{{item.downUrl}}" mode='widthFix' lazy-load bind:tap="imgTapHandle"></image>
+      </view>
     </scroll-view>
-
-
+  </view>
+  <view class='img-wrapper {{crt_view === "oldest" ? "active" : ""}}'>
+    <scroll-view class='img-scroll' scroll-y bindscrolltolower="nextPage" enable-back-to-top lower-threshold="{{100}}">
+      <view class='img-box' wx:for="{{oldestImg.list}}" wx:key="{{item.id}}">
+        <image src='{{item.url}}' mode='widthFix' lazy-load></image>
+      </view>
+    </scroll-view>
+  </view>
+  <view class='img-wrapper {{crt_view === "popular" ? "active" : ""}}'>
+    <scroll-view class='img-scroll' scroll-y bindscrolltolower="nextPage" enable-back-to-top lower-threshold="{{100}}">
+      <view class='img-box' wx:for="{{popularImg.list}}" wx:key="{{item.id}}">
+        <image src='{{item.url}}' mode='widthFix' lazy-load></image>
+      </view>
+    </scroll-view>
   </view>
 
 </view>

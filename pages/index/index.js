@@ -16,7 +16,8 @@ Page({
     popularImg: {
       list: [],
       page: 1
-    }
+    },
+    xhrTimer: -1
   },
   onLoad: function () {
     this.getImageList();
@@ -46,35 +47,48 @@ Page({
     this.getImageList();
   },
   getImageList() {
-    wx.showLoading({
-      title: 'MOJING...',
-      mask: true
-    })
-    wx.request({
-      url: "https://api.unsplash.com/photos",
-      data: {
-        page: this.data[this.data.crt_view + 'Img'].page,
-        per_page: 10,
-        order_by: this.data.crt_view
-      },
-      header: {
-        Authorization: 'Client-ID ' + app.globalData.client_id
-      },
-      success: data => {
-        if (!data.data.errors) {
-          this.data[this.data.crt_view + 'Img'].page++;
-          data.data.forEach((e, i) => {
-            this.data[this.data.crt_view + 'Img'].list.push({
-              id: e.id,
-              url: e.urls.regular
+    let _this = this;
+    if (_this.data.xhrTimer > 0) return;
+    _this.data.xhrTimer = setTimeout(() => {
+      wx.showLoading({
+        title: 'MOJING...',
+        mask: true
+      });
+      wx.request({
+        url: "https://api.unsplash.com/photos",
+        data: {
+          page: _this.data[_this.data.crt_view + 'Img'].page,
+          per_page: 10,
+          order_by: _this.data.crt_view
+        },
+        header: {
+          Authorization: 'Client-ID ' + app.globalData.client_id
+        },
+        success: data => {
+          if (!data.data.errors) {
+            _this.data[_this.data.crt_view + 'Img'].page++;
+            data.data.forEach((e, i) => {
+              _this.data[_this.data.crt_view + 'Img'].list.push({
+                id: e.id,
+                url: e.urls.small,
+                downUrl: e.links.regular
+              });
             });
-          });
-          this.setData(this.data);
+            _this.setData(_this.data);
+          }
+        },
+        complete() {
+          clearTimeout(_this.data.xhrTimer);
+          _this.data.xhrTimer = -1;
+          wx.hideLoading();
         }
-      },
-      complete() {
-        wx.hideLoading();
-      }
+      });
+    }, 300);
+  },
+  imgTapHandle(e) {
+    let dataset = e.currentTarget.dataset;
+    wx.previewImage({
+      urls: [dataset.downurl]
     })
   }
 })
