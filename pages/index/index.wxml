@@ -20,14 +20,22 @@
   <view class='img-wrapper {{crt_view === "oldest" ? "active" : ""}}'>
     <scroll-view class='img-scroll' scroll-y bindscrolltolower="nextPage" enable-back-to-top lower-threshold="{{100}}">
       <view class='img-box' wx:for="{{oldestImg.list}}" wx:key="{{item.id}}">
-        <image src='{{item.url}}' mode='widthFix' lazy-load></image>
+        <image src='{{item.url}}' data-url="{{item.url}}" data-downurl="{{item.downUrl}}" mode='widthFix' lazy-load bind:tap="imgTapHandle"></image>
+        <view class='img-info'>
+          <image class="icon-camera" src='../../asset/images/camera.png'></image>
+          <view class="img-info-link">{{item.authorName}} / Unsplash </view>
+        </view>
       </view>
     </scroll-view>
   </view>
   <view class='img-wrapper {{crt_view === "popular" ? "active" : ""}}'>
     <scroll-view class='img-scroll' scroll-y bindscrolltolower="nextPage" enable-back-to-top lower-threshold="{{100}}">
       <view class='img-box' wx:for="{{popularImg.list}}" wx:key="{{item.id}}">
-        <image src='{{item.url}}' mode='widthFix' lazy-load></image>
+        <image src='{{item.url}}' data-url="{{item.url}}" data-downurl="{{item.downUrl}}" mode='widthFix' lazy-load bind:tap="imgTapHandle"></image>
+        <view class='img-info'>
+          <image class="icon-camera" src='../../asset/images/camera.png'></image>
+          <view class="img-info-link">{{item.authorName}} / Unsplash </view>
+        </view>
       </view>
     </scroll-view>
   </view>

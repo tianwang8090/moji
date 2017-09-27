@@ -37,13 +37,14 @@ Page({
   },
   onPullDownRefresh: function () { },
   tabTaphandle: function (e) {
-    let dataset = e.currentTarget.dataset;
-    if (dataset.name === this.data.crt_view) return;
-    this.setData({
+    let dataset = e.currentTarget.dataset,
+      _this = this;
+    if (dataset.name === _this.data.crt_view) return;
+    _this.setData({
       crt_view: dataset.name
     });
-    if (this.data[this.data.crt_view + 'Img'].list.length) return;
-    this.getImageList();
+    if (_this.data[_this.data.crt_view + 'Img'].list.length) return;
+    _this.getImageList();
   },
   nextPage: function (e) {
     this.getImageList();
@@ -74,7 +75,7 @@ Page({
               _this.data[_this.data.crt_view + 'Img'].list.push({
                 id: e.id,
                 url: e.urls.small,
-                downUrl: e.links.regular,
+                downUrl: e.urls.regular,
                 authorName: e.user.name
               });
             }
