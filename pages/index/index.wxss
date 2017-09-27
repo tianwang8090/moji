@@ -50,6 +50,7 @@
 }
 
 .img-box {
+  position: relative;
   margin-bottom: 20rpx;
   width: 100%;
   box-shadow: 0 0 10rpx #eee;
@@ -59,4 +60,31 @@ image {
   display: block;
   background-color: #eee;
   width: 100%;
+}
+
+.img-info {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding-left: 10rpx;
+  background-color: rgba(50, 50, 50, 0.5);
+  padding-bottom: 10rpx;
+}
+
+.icon-camera {
+  display: inline-block;
+  margin-right: 5rpx;
+  vertical-align: middle;
+  width: 40rpx;
+  height: 40rpx;
+  background-color: transparent;
+}
+
+.img-info-link {
+  display: inline-block;
+  vertical-align: middle;
+  color: #fff;
+  font-size: 24rpx;
+  font-weight: lighter;
 }

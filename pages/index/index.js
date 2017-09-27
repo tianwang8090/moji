@@ -30,11 +30,13 @@ Page({
       hasUserInfo: true
     })
   },
-  onShareAppMessage() { },
-  onPullDownRefresh() {
-
+  onShareAppMessage: function () {
+    return {
+      title: "MOJI-发现好图片"
+    }
   },
-  tabTaphandle(e) {
+  onPullDownRefresh: function () { },
+  tabTaphandle: function (e) {
     let dataset = e.currentTarget.dataset;
     if (dataset.name === this.data.crt_view) return;
     this.setData({
@@ -43,10 +45,10 @@ Page({
     if (this.data[this.data.crt_view + 'Img'].list.length) return;
     this.getImageList();
   },
-  nextPage(e) {
+  nextPage: function (e) {
     this.getImageList();
   },
-  getImageList() {
+  getImageList: function () {
     let _this = this;
     if (_this.data.xhrTimer > 0) return;
     _this.data.xhrTimer = setTimeout(() => {
@@ -64,20 +66,22 @@ Page({
         header: {
           Authorization: 'Client-ID ' + app.globalData.client_id
         },
-        success: data => {
+        success: function (data) {
           if (!data.data.errors) {
             _this.data[_this.data.crt_view + 'Img'].page++;
-            data.data.forEach((e, i) => {
+            for (let i = 0; i < data.data.length; i++) {
+              let e = data.data[i];
               _this.data[_this.data.crt_view + 'Img'].list.push({
                 id: e.id,
                 url: e.urls.small,
-                downUrl: e.links.regular
+                downUrl: e.links.regular,
+                authorName: e.user.name
               });
-            });
+            }
             _this.setData(_this.data);
           }
         },
-        complete() {
+        complete: function () {
           clearTimeout(_this.data.xhrTimer);
           _this.data.xhrTimer = -1;
           wx.hideLoading();
@@ -85,7 +89,7 @@ Page({
       });
     }, 300);
   },
-  imgTapHandle(e) {
+  imgTapHandle: function (e) {
     let dataset = e.currentTarget.dataset;
     wx.previewImage({
       urls: [dataset.downurl]
