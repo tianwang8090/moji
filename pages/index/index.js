@@ -32,7 +32,7 @@ Page({
   },
   onShareAppMessage: function () {
     return {
-      title: "MOJI-发现好图片"
+      title: "MOJI-寻觅好图片"
     }
   },
   onPullDownRefresh: function () { },
@@ -61,14 +61,15 @@ Page({
         url: "https://api.unsplash.com/photos",
         data: {
           page: _this.data[_this.data.crt_view + 'Img'].page,
-          per_page: 10,
+          per_page: 100,
           order_by: _this.data.crt_view
         },
         header: {
           Authorization: 'Client-ID ' + app.globalData.client_id
         },
         success: function (data) {
-          if (!data.data.errors) {
+          console.log(data);
+          if (data.statusCode === 200) {
             _this.data[_this.data.crt_view + 'Img'].page++;
             for (let i = 0; i < data.data.length; i++) {
               let e = data.data[i];
@@ -80,6 +81,27 @@ Page({
               });
             }
             _this.setData(_this.data);
+          } else {
+            let msg = "MOJI-Slow and Better";
+            switch (data.statusCode) {
+              case 403:
+                msg = "嘘~，MOJI睡着了，待会来叫它吧！";
+                break;
+              case 404: 
+                msg = "MOJI没找到这张图片！";
+                break;
+              case 401:
+                mag = "咳咳~，MOJI生病了！"
+              default:
+                msg = "呀！MOJI出去玩了。";
+                break;
+            }
+            wx.showModal({
+              title: 'MOJI',
+              content: msg,
+              showCancel: false,
+              confirmText: "好的"
+            })
           }
         },
         complete: function () {
