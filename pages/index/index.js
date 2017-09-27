@@ -54,7 +54,7 @@ Page({
     if (_this.data.xhrTimer > 0) return;
     _this.data.xhrTimer = setTimeout(() => {
       wx.showLoading({
-        title: 'MOJING...',
+        title: 'MOoOo...',
         mask: true
       });
       wx.request({
