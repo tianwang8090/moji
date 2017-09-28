@@ -4,31 +4,32 @@ const app = getApp()
 
 Page({
   data: {
-    crt_view: "latest",
-    latestImg: {
-      list: [],
-      page: 1
-    },
-    oldestImg: {
-      list: [],
-      page: 1,
-    },
-    popularImg: {
-      list: [],
-      page: 1
-    },
-    xhrTimer: -1
+    crt_view_index: 0,
+    viewList: [
+      {
+        name: "latest",
+        url: "https://api.unsplash.com/photos",
+        list: [],
+        page: 1
+      },
+      {
+        name: "popular",
+        url: "https://api.unsplash.com/photos",
+        list: [],
+        page: 1
+      },
+      {
+        name: "random",
+        url: "https://api.unsplash.com/photos/random",
+        list: [],
+        page: 1
+      }
+    ],
+    xhrTimer: -1,
+    UTMString: '?utm_source=MOJI&utm_medium=referral&utm_campaign=api-credit'
   },
   onLoad: function () {
     this.getImageList();
-  },
-  getUserInfo: function (e) {
-    console.log(e)
-    app.globalData.userInfo = e.detail.userInfo
-    this.setData({
-      userInfo: e.detail.userInfo,
-      hasUserInfo: true
-    })
   },
   onShareAppMessage: function () {
     return {
@@ -39,11 +40,11 @@ Page({
   tabTaphandle: function (e) {
     let dataset = e.currentTarget.dataset,
       _this = this;
-    if (dataset.name === _this.data.crt_view) return;
+    if (dataset.index === _this.data.crt_view_index) return;
     _this.setData({
-      crt_view: dataset.name
+      crt_view_index: dataset.index
     });
-    if (_this.data[_this.data.crt_view + 'Img'].list.length) return;
+    if (_this.data.viewList[_this.data.crt_view_index].list.length) return;
     _this.getImageList();
   },
   nextPage: function (e) {
@@ -57,27 +58,43 @@ Page({
         title: 'MOoOo...',
         mask: true
       });
+
+      let view = _this.data.viewList[_this.data.crt_view_index], params = {};
+      switch (view.name) {
+        case "latest":
+        case "popular":
+          params = {
+            page: view.page,
+            per_page: 100,
+            order_by: view.name
+          };
+          break;
+        case "random":
+          params = {
+            count: 30,
+            featured: false
+          };
+          break;
+        default:
+          break;
+      };
       wx.request({
-        url: "https://api.unsplash.com/photos",
-        data: {
-          page: _this.data[_this.data.crt_view + 'Img'].page,
-          per_page: 100,
-          order_by: _this.data.crt_view
-        },
+        url: view.url,
+        data: params,
         header: {
           Authorization: 'Client-ID ' + app.globalData.client_id
         },
         success: function (data) {
-          console.log(data);
           if (data.statusCode === 200) {
-            _this.data[_this.data.crt_view + 'Img'].page++;
+            view.page++;
             for (let i = 0; i < data.data.length; i++) {
               let e = data.data[i];
-              _this.data[_this.data.crt_view + 'Img'].list.push({
+              view.list.push({
                 id: e.id,
                 url: e.urls.small,
                 downUrl: e.urls.regular,
-                authorName: e.user.name
+                authorName: e.user.name,
+                authorLink: e.user.links.html,
               });
             }
             _this.setData(_this.data);
@@ -87,7 +104,7 @@ Page({
               case 403:
                 msg = "嘘~，MOJI睡着了，待会来叫它吧！";
                 break;
-              case 404: 
+              case 404:
                 msg = "MOJI没找到这张图片！";
                 break;
               case 401:
@@ -116,6 +133,33 @@ Page({
     let dataset = e.currentTarget.dataset;
     wx.previewImage({
       urls: [dataset.downurl]
+    })
+  },
+  authorTapHandle(e) {
+    let dataset = e.currentTarget.dataset,
+      _this = this;
+    wx.setClipboardData({
+      data: dataset.link + _this.data.UTMString,
+      success: function () {
+        wx.showModal({
+          title: 'MOJI提示',
+          content: '因为小程序限制打开网页，MOJI帮你复制了图片作者的主页链接，去浏览器粘贴访问就好啦~',
+          showCancel: false
+        })
+      }
+    })
+  },
+  unsplashTapHandle(e) {
+    let _this = this;
+    wx.setClipboardData({
+      data: 'https://unsplash.com' + _this.data.UTMString,
+      success: function () {
+        wx.showModal({
+          title: 'MOJI提示',
+          content: '因为小程序限制打开网页，MOJI帮你复制了网站的链接，去浏览器粘贴访问就好啦~',
+          showCancel: false
+        })
+      }
     })
   }
 })
