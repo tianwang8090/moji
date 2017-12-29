@@ -8,19 +8,19 @@ Page({
     viewList: [
       {
         name: "latest",
-        url: "https://api.unsplash.com/photos",
+        url: "https://www.umoo.wang/moji-api/photo",
         list: [],
         page: 1
       },
       {
         name: "popular",
-        url: "https://api.unsplash.com/photos",
+        url: "https://www.umoo.wang/moji-api/photo",
         list: [],
         page: 1
       },
       {
         name: "random",
-        url: "https://api.unsplash.com/photos/random",
+        url: "https://www.umoo.wang/moji-api/photo",
         list: [],
         page: 1
       }
@@ -65,14 +65,12 @@ Page({
         case "popular":
           params = {
             page: view.page,
-            per_page: 100,
-            order_by: view.name
+            orderBy: view.name
           };
           break;
         case "random":
           params = {
-            count: 30,
-            featured: false
+            orderBy: view.name
           };
           break;
         default:
@@ -81,14 +79,12 @@ Page({
       wx.request({
         url: view.url,
         data: params,
-        header: {
-          Authorization: 'Client-ID ' + app.globalData.client_id
-        },
-        success: function (data) {
-          if (data.statusCode === 200) {
+        success: function (res) {
+          if (res.statusCode === 200 && res.data.status) {
             view.page++;
-            for (let i = 0; i < data.data.length; i++) {
-              let e = data.data[i];
+            let data = res.data.data
+            for (let i = 0; i < data.length; i++) {
+              let e = data[i];
               view.list.push({
                 id: e.id,
                 url: e.urls.small,
@@ -108,7 +104,7 @@ Page({
                 msg = "MOJI没找到这张图片！";
                 break;
               case 401:
-                mag = "咳咳~，MOJI生病了！"
+                msg = "咳咳~，MOJI生病了！"
               default:
                 msg = "呀！MOJI出去玩了。";
                 break;
